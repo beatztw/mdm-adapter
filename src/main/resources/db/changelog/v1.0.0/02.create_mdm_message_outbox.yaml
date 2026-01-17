@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: "02.create_mdm_message_outbox.yaml"
+      author: "Chugunov AO"
+      changes:
+        - createTable:
+            tableName: mdm_message_outbox
+            remarks: "Статус отправки MDM события во внешний сервис"
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+
+              - column:
+                  name: mdm_message_id
+                  type: UUID
+                  remarks: "Уникальный идентификатор события из таблицы mdm_message"
+              - column:
+                  name: status
+                  type: varchar
+                  remarks: "Статус доставки сообщения, возможные значения: NEW, DELIVERED, ERROR, FATAL_ERROR"
+              - column:
+                  name: target
+                  type: varchar
+                  remarks: "Направление, куда должно быть доставлено сообщение, USER_DATA_SERVICE_ONE, USER_DATA_SERVICE_TWO"
+              - column:
+                  name: response_data
+                  type: jsonb
+                  remarks: ''' 
+                          Ответ от внешнего сервиса, должен передаваться в виде JSON с двумя полями:
+                          - response: строка - ответ от внешнего сервиса в серелизованном виде
+                          - errors: список строк - ошибки, возникшие в процессе отправки запроса и обработки ответа от
+                          внешнего сервиса
+                        '''
+              - column:
+                  name: create_time
+                  type: timestamp
+                  remarks: "Время создания"
+              - column:
+                  name: create_user
+                  type: varchar
+                  remarks: "Пользователь, создавший запись"
+              - column:
+                  name: last_update_time
+                  type: timestamp
+                  remarks: "Время обновления"
+              - column:
+                  name: last_update_user
+                  type: varchar
+                  remarks: "Пользователь, изменивший запись"
