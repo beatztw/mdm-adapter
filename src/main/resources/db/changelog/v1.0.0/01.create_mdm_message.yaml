@@ -23,7 +23,7 @@ databaseChangeLog:
               - column:
                   name: type
                   type: varchar
-                  remarks: "Тип события, возможные значения: USER_PHONE_CHANGE"
+                  remarks: "Тип события"
               - column:
                   name: payload
                   type: jsonb
@@ -31,6 +31,7 @@ databaseChangeLog:
               - column:
                   name: create_time
                   type: timestamp
+                  defaultValue: current_timestamp
                   remarks: "Время создания"
               - column:
                   name: create_user
@@ -39,6 +40,7 @@ databaseChangeLog:
               - column:
                   name: last_update_time
                   type: timestamp
+                  defaultValue: current_timestamp
                   remarks: "Время обновления"
               - column:
                   name: last_update_user

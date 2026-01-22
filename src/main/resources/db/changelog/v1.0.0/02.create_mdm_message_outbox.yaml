@@ -16,24 +16,19 @@ databaseChangeLog:
               - column:
                   name: mdm_message_id
                   type: UUID
-                  remarks: "Уникальный идентификатор события из таблицы mdm_message"
+                  remarks: "Уникальный идентификатор события"
               - column:
                   name: status
                   type: varchar
-                  remarks: "Статус доставки сообщения, возможные значения: NEW, DELIVERED, ERROR, FATAL_ERROR"
+                  remarks: "Статус доставки сообщения"
               - column:
                   name: target
                   type: varchar
-                  remarks: "Направление, куда должно быть доставлено сообщение, USER_DATA_SERVICE_ONE, USER_DATA_SERVICE_TWO"
+                  remarks: "Направление, куда должно быть доставлено сообщение"
               - column:
                   name: response_data
                   type: jsonb
-                  remarks: ''' 
-                          Ответ от внешнего сервиса, должен передаваться в виде JSON с двумя полями:
-                          - response: строка - ответ от внешнего сервиса в серелизованном виде
-                          - errors: список строк - ошибки, возникшие в процессе отправки запроса и обработки ответа от
-                          внешнего сервиса
-                        '''
+                  remarks: "Ответ от внешнего сервиса в формате JSON"
               - column:
                   name: create_time
                   type: timestamp
