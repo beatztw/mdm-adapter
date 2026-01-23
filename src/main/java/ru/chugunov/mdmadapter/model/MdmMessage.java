@@ -24,24 +24,19 @@ public class MdmMessage extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     /**
      * Уникальный идентификатор сообщения, полученного из внешней системы
      */
     private UUID externalId;
-
     /**
      * Уникальный идентификатор клиента связанного с данным сообщением
      */
     private String guid;
-
     /**
      * Тип mdm события
-     * @see MdmType
      */
     @Enumerated(EnumType.STRING)
     private MdmType type;
-
     /**
      * Содержание сообщения в формате jsonb
      */

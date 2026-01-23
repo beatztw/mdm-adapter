@@ -24,28 +24,20 @@ public class MdmMessageOutbox extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     /**
      * Уникальный идентификатор события из таблицы {@link MdmMessage}
      */
     private UUID mdmMessageId;
-
     /**
      * Статус доставки сообщения во внешний сервис
-     *
-     * @see MdmMessageOutboxStatus
      */
     @Enumerated(EnumType.STRING)
     private MdmMessageOutboxStatus status;
-
     /**
      * Направление, куда должно быть доставлено сообщение
-     *
-     * @see MdmMessageOutboxTarget
      */
     @Enumerated(EnumType.STRING)
     private MdmMessageOutboxTarget target;
-
     /**
      * Ответ внешнего сервиса после обработки сообщения
      * Должен быть представлен в виде JSON с двумя полями:
