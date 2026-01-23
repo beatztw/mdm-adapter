@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: "01.create_mdm_message.yaml"
+      author: "Chugunov AO"
+      changes:
+        - createTable:
+            tableName: mdm_message
+            remarks: "Событие из MDM системы"
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: external_id
+                  type: UUID
+                  remarks: "Уникальный идентификатор сообщения из внешней системы"
+              - column:
+                  name: guid
+                  type: varchar
+                  remarks: "Уникальный идентификатор клиента"
+              - column:
+                  name: type
+                  type: varchar
+                  remarks: "Тип события"
+              - column:
+                  name: payload
+                  type: jsonb
+                  remarks: "Содержание сообщения"
+              - column:
+                  name: create_time
+                  type: timestamp
+                  defaultValue: current_timestamp
+                  remarks: "Время создания"
+              - column:
+                  name: create_user
+                  type: varchar
+                  remarks: "Пользователь, создавший запись"
+              - column:
+                  name: last_update_time
+                  type: timestamp
+                  defaultValue: current_timestamp
+                  remarks: "Время обновления"
+              - column:
+                  name: last_update_user
+                  type: varchar
+                  remarks: "Пользователь, изменивший запись"
