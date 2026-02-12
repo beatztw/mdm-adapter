@@ -40,6 +40,7 @@ dependencies {
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.testcontainers:kafka'
 
+    implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'org.liquibase:liquibase-core'
 
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
