@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
   servlet:
     context-path: /${spring.application.name}
 
@@ -7,7 +7,7 @@ spring:
   application:
     name: mdm-adapter
   datasource:
-    url: jdbc:postgresql://localhost:5434/mdm-adapter
+    url: jdbc:postgresql://localhost:5433/mdm-adapter
     username: postgres
     password: postgres
     hikari:
@@ -18,7 +18,13 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
+  kafka:
+    bootstrap-servers: 81.30.105.54:29092
+    producer:
+      acks: all
+    consumer:
+      group-id: mdm-group
   cloud:
     openfeign:
       client:
@@ -35,7 +41,7 @@ mdm:
     username: chugunovao
   kafka:
     mdm-event:
-      enable: true
+      enabled: true
       change-phone:
         topic-in: MDM.Change.Phone.IN.V1
   service:
