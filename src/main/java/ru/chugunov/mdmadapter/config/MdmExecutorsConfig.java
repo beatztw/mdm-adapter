@@ -1,5 +1,6 @@
 package ru.chugunov.mdmadapter.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,10 +9,15 @@ import java.util.concurrent.*;
 @Configuration
 public class MdmExecutorsConfig {
 
+    @Value("${mdm.executors.outbox-elastic.threads}")
+    private Integer OutboxElasticThreads;
+    @Value("${mdm.executors.outbox-elastic.queue-capacity}")
+    private Integer OutboxElasticQueueCapacity;
+
     @Bean(destroyMethod = "shutdown")
     public ExecutorService outboxElasticExecutor(){
-        int threads = 10;
-        int queueCapacity = 1000;
+        int threads = OutboxElasticThreads;
+        int queueCapacity = OutboxElasticQueueCapacity;
 
         return createElasticExecutor(threads, queueCapacity);
     }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class MdmMessagePayload {
 
     /**
-        Телефон для передачи в payload mdm сообщения
+     * Телефон для передачи в payload mdm сообщения
      */
     private String phone;
 }

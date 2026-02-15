@@ -51,5 +51,9 @@ mdm:
     user-data-two:
       url: http://81.30.105.54:8080
       response-timeout-seconds: 5
+  executors:
+    outbox-elastic:
+      threads: 10
+      queue-capacity: 1000
 
 

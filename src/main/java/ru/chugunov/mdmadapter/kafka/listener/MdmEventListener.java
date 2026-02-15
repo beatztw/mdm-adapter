@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import ru.chugunov.mdmadapter.dto.UpdatePhoneMdmEvent;
+import ru.chugunov.mdmadapter.exeption.BusinessException;
 import ru.chugunov.mdmadapter.service.MdmEventProcessor;
 import ru.chugunov.mdmadapter.utils.JsonUtils;
 
@@ -24,14 +25,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "mdm.kafka.mdm-event.enable", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "mdm.kafka.mdm-event", name = "enabled", havingValue = "true")
 public class MdmEventListener {
 
     private final JsonUtils jsonUtils;
     private final Validator validator;
     private final MdmEventProcessor mdmEventProcessor;
 
-    @KafkaListener(topics = "${mdm.kafka.mdm-event.change-phone.topic-in}")
+    @KafkaListener(topics = "${mdm.kafka.mdm-event.change-phone.topic-in}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeUpdatePhoneEvent(ConsumerRecord<String, String> consumerRecord) {
         processMessage(consumerRecord, mdmEventProcessor::process, UpdatePhoneMdmEvent.class);
     }
@@ -54,6 +55,10 @@ public class MdmEventListener {
 
             processor.accept(mdmEvent);
 
+        } catch (ValidateException e) {
+            log.warn("Ошибка валидации сообщения из kafka: {}", e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("Бизнес исключение при обработке сообщения из kafka: {}", e.getMessage(), e);
         } catch (Exception e) {
             log.error("Непредвиденное исключение при обработке сообщения из kafka: {}", e.getMessage(), e);
         } finally {

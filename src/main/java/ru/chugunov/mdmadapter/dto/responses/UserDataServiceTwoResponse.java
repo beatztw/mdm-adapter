@@ -5,16 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceResponseBody implements Serializable {
+public class UserDataServiceTwoResponse {
 
-    private String id;
-    private ServiceResponseStatus status;
-    private String errorMessage;
+    private UserDataServiceTwoResponseBody body;
 
 }

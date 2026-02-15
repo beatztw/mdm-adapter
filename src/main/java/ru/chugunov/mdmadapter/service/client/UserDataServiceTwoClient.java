@@ -3,7 +3,7 @@ package ru.chugunov.mdmadapter.service.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.chugunov.mdmadapter.dto.requests.UpdateUserDataServiceTwoRequest;
-import ru.chugunov.mdmadapter.dto.responses.ServiceResponse;
+import ru.chugunov.mdmadapter.dto.responses.UserDataServiceTwoResponse;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -11,5 +11,5 @@ import java.util.concurrent.CompletableFuture;
 public interface UserDataServiceTwoClient {
 
     @PostMapping(value = "/user-data-service-two/user/update/phone")
-    CompletableFuture<ServiceResponse> updatePhone(UpdateUserDataServiceTwoRequest request);
+    CompletableFuture<UserDataServiceTwoResponse> updatePhone(UpdateUserDataServiceTwoRequest request);
 }
