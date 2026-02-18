@@ -34,7 +34,7 @@ public class MdmEventListener {
 
     @KafkaListener(topics = "${mdm.kafka.mdm-event.change-phone.topic-in}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeUpdatePhoneEvent(ConsumerRecord<String, String> consumerRecord) {
-        processMessage(consumerRecord, mdmEventProcessor::process, UpdatePhoneMdmEvent.class);
+        processMessage(consumerRecord, mdmEventProcessor::processEvent, UpdatePhoneMdmEvent.class);
     }
 
     public <T> void processMessage(ConsumerRecord<String, String> consumerRecord,

@@ -10,23 +10,38 @@ import java.util.concurrent.*;
 public class MdmExecutorsConfig {
 
     @Value("${mdm.executors.outbox-elastic.threads}")
-    private Integer OutboxElasticThreads;
+    private Integer outboxElasticThreads;
     @Value("${mdm.executors.outbox-elastic.queue-capacity}")
-    private Integer OutboxElasticQueueCapacity;
+    private Integer outboxElasticQueueCapacity;
+    @Value("${mdm.executors.resend-mdm-message-outbox.threads}")
+    private Integer resendMdmMessageOutboxThreads;
+    @Value("${mdm.executors.resend-mdm-message-outbox.queue-capacity}")
+    private Integer resendMdmMessageOutboxQueueCapacity;
+    @Value("${mdm.executors.external-service.threads}")
+    private Integer externalServiceThreads;
+    @Value("${mdm.executors.external-service.queue-capacity}")
+    private Integer externalServiceQueueCapacity;
 
     @Bean(destroyMethod = "shutdown")
-    public ExecutorService outboxElasticExecutor(){
-        int threads = OutboxElasticThreads;
-        int queueCapacity = OutboxElasticQueueCapacity;
+    public ExecutorService outboxElasticExecutor() {
+        return createElasticExecutor(outboxElasticThreads, outboxElasticQueueCapacity);
+    }
 
-        return createElasticExecutor(threads, queueCapacity);
+    @Bean(destroyMethod = "shutdown")
+    public ExecutorService externalServiceExecutor() {
+        return createElasticExecutor(externalServiceThreads, externalServiceQueueCapacity);
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public ExecutorService resendMdmMessageOutboxExecutor() {
+        return createElasticExecutor(resendMdmMessageOutboxThreads, resendMdmMessageOutboxQueueCapacity);
     }
 
     private ThreadPoolExecutor createElasticExecutor(int threads, int queueCapacity) {
         BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(queueCapacity);
 
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-            threads, threads,
+                threads, threads,
                 60L, TimeUnit.SECONDS,
                 queue, new ThreadPoolExecutor.AbortPolicy()
         );
