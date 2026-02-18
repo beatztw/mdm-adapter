@@ -1,10 +1,7 @@
 package ru.chugunov.mdmadapter.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -13,6 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -36,12 +34,12 @@ public class MdmMessage extends AuditableEntity {
      * Тип mdm события
      */
     @Enumerated(EnumType.STRING)
-    private MdmType type;
+    private MdmMessageType type;
     /**
      * Содержание сообщения в формате jsonb
      */
     @JdbcTypeCode(SqlTypes.JSON)
-    private String payload;
+    private MdmMessagePayload payload;
 
     @Override
     public boolean equals(Object o) {
