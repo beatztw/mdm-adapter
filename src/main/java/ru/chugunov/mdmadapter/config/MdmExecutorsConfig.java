@@ -1,40 +1,34 @@
 package ru.chugunov.mdmadapter.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.chugunov.mdmadapter.property.MdmExecutorsProperty;
 
 import java.util.concurrent.*;
 
 @Configuration
+@RequiredArgsConstructor
 public class MdmExecutorsConfig {
 
-    @Value("${mdm.executors.outbox-elastic.threads}")
-    private Integer outboxElasticThreads;
-    @Value("${mdm.executors.outbox-elastic.queue-capacity}")
-    private Integer outboxElasticQueueCapacity;
-    @Value("${mdm.executors.resend-mdm-message-outbox.threads}")
-    private Integer resendMdmMessageOutboxThreads;
-    @Value("${mdm.executors.resend-mdm-message-outbox.queue-capacity}")
-    private Integer resendMdmMessageOutboxQueueCapacity;
-    @Value("${mdm.executors.external-service.threads}")
-    private Integer externalServiceThreads;
-    @Value("${mdm.executors.external-service.queue-capacity}")
-    private Integer externalServiceQueueCapacity;
+    private final MdmExecutorsProperty mdmExecutorsProperty;
 
     @Bean(destroyMethod = "shutdown")
     public ExecutorService outboxElasticExecutor() {
-        return createElasticExecutor(outboxElasticThreads, outboxElasticQueueCapacity);
+        return createElasticExecutor(mdmExecutorsProperty.getOutboxElastic().getThreads(),
+                mdmExecutorsProperty.getOutboxElastic().getQueueCapacity());
     }
 
     @Bean(destroyMethod = "shutdown")
     public ExecutorService externalServiceExecutor() {
-        return createElasticExecutor(externalServiceThreads, externalServiceQueueCapacity);
+        return createElasticExecutor(mdmExecutorsProperty.getExternalService().getThreads(),
+                mdmExecutorsProperty.getExternalService().getQueueCapacity());
     }
 
     @Bean(destroyMethod = "shutdown")
     public ExecutorService resendMdmMessageOutboxExecutor() {
-        return createElasticExecutor(resendMdmMessageOutboxThreads, resendMdmMessageOutboxQueueCapacity);
+        return createElasticExecutor(mdmExecutorsProperty.getResendMdmMessageOutbox().getThreads(),
+                mdmExecutorsProperty.getResendMdmMessageOutbox().getQueueCapacity());
     }
 
     private ThreadPoolExecutor createElasticExecutor(int threads, int queueCapacity) {

@@ -44,13 +44,11 @@ mdm:
       enabled: true
       change-phone:
         topic-in: MDM.Change.Phone.IN.V1
-  service:
+  integration:
     user-data-one:
       url: http://81.30.105.54:8020
-      response-timeout-seconds: 5
     user-data-two:
       url: http://81.30.105.54:8020
-      response-timeout-seconds: 5
   executors:
     outbox-elastic:
       threads: 10
@@ -63,7 +61,6 @@ mdm:
       queue-capacity: 1000
   scheduler:
     resend-mdm-message-outbox:
-      page-number: 0
       page-size: 100
       cron: 0 */5 * * * *
 

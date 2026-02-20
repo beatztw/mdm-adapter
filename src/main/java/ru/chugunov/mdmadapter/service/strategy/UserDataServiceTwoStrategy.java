@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
@@ -49,28 +48,26 @@ public class UserDataServiceTwoStrategy implements MdmMessageOutboxStrategy {
         callService(mdmMessage, senderName, outbox);
     }
 
-    private CompletableFuture<Void> callService(MdmMessage mdmMessage, String senderName, MdmMessageOutbox outbox) {
+    private CompletableFuture<Void> callService(MdmMessage mdmMessage,
+                                                String senderName,
+                                                MdmMessageOutbox outbox) throws BusinessException {
         UpdateUserDataServiceTwoRequest request = buildRequest(mdmMessage, senderName);
 
             return CompletableFuture.supplyAsync(() -> userDataServiceTwoClient.updatePhone(request),
                             externalServiceExecutor)
-                    .orTimeout(mdmProperty.getService().getUserDataTwo().getResponseTimeoutSeconds(),
-                            TimeUnit.SECONDS)
                     .thenAccept(response -> handleResponse(outbox, response))
                     .exceptionallyAsync(ex -> {
                         if (ex instanceof TimeoutException) {
-                            log.warn("Превышено время ожидания от сервиса при отправке события id={}, target={}",
+                            log.error("Превышено время ожидания от сервиса при отправке события id={}, target={}",
                                     outbox.getMdmMessageId(), outbox.getTarget());
 
-                            handleError(outbox, new SendOutboxTimeoutException("user-data-service-two"));
+                            throw new SendOutboxTimeoutException("user-data-service-one");
                         } else {
                             log.error("При отправке события id={}, target={} в сервисы возникла непредвиденная ошибка",
                                     outbox.getMdmMessageId(), outbox.getTarget());
 
-                            handleFatalError(outbox,
-                                    new BusinessException("Ошибка при вызове сервиса user-data-service-two"));
+                            throw new BusinessException("Ошибка при вызове сервиса user-data-service-two");
                         }
-                        return null;
                     }, externalServiceExecutor);
 
     }
@@ -99,19 +96,4 @@ public class UserDataServiceTwoStrategy implements MdmMessageOutboxStrategy {
                         .build()))
                 .build();
     }
-
-    private void handleFatalError(MdmMessageOutbox outbox, Exception e) {
-        outbox.setStatus(MdmMessageOutboxStatus.FATAL_ERROR);
-        outbox.setResponseData(jsonUtils.toJson(Map.of("errors", List.of(e))));
-
-        mdmMessageOutboxRepository.save(outbox);
-    }
-
-    private void handleError(MdmMessageOutbox outbox, Exception e) {
-        outbox.setStatus(MdmMessageOutboxStatus.ERROR);
-        outbox.setResponseData(jsonUtils.toJson(Map.of("response", List.of(e))));
-
-        mdmMessageOutboxRepository.save(outbox);
-    }
-
 }

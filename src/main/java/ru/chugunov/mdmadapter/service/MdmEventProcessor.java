@@ -29,11 +29,6 @@ public class MdmEventProcessor {
     public void processEvent(UpdatePhoneMdmEvent event) {
         UUID eventExternalId = UUID.fromString(event.getId());
 
-        if (mdmMessageRepository.existsByExternalId(eventExternalId)) {
-            log.info("Событие с externalId = {} уже было обработано ранее", eventExternalId);
-            return;
-        }
-
         MdmMessage mdmMessage = saveMdmMessage(event, eventExternalId);
 
         List<MdmMessageOutbox> mdmMessageOutboxes = saveOutboxRecords(mdmMessage);

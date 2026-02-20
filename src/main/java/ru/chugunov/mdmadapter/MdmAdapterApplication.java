@@ -5,12 +5,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import ru.chugunov.mdmadapter.property.MdmExecutorsProperty;
 import ru.chugunov.mdmadapter.property.MdmProperty;
 
 @EnableScheduling
 @EnableFeignClients
 @SpringBootApplication
-@EnableConfigurationProperties(value = MdmProperty.class)
+@EnableConfigurationProperties(value = {
+        MdmProperty.class,
+        MdmExecutorsProperty.class
+})
 public class MdmAdapterApplication {
 
     public static void main(String[] args) {

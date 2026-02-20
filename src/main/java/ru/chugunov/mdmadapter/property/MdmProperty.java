@@ -10,30 +10,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class MdmProperty {
 
     private System system = new System();
-    private Service service = new Service();
 
     @Getter
     @Setter
     public static class System {
         private String username;
-    }
-
-    @Getter
-    @Setter
-    public static class Service {
-        private UserDataOne userDataOne = new UserDataOne();
-        private UserDataTwo userDataTwo = new UserDataTwo();
-
-        @Getter
-        @Setter
-        public static class UserDataOne {
-            private int responseTimeoutSeconds;
-        }
-
-        @Getter
-        @Setter
-        public static class UserDataTwo {
-            private int responseTimeoutSeconds;
-        }
     }
 }

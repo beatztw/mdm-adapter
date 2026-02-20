@@ -3,8 +3,8 @@ package ru.chugunov.mdmadapter.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.chugunov.mdmadapter.exeption.BusinessException;
 import ru.chugunov.mdmadapter.exeption.MdmMessageNotFoundException;
-import ru.chugunov.mdmadapter.exeption.SendOutboxTimeoutException;
 import ru.chugunov.mdmadapter.model.MdmMessage;
 import ru.chugunov.mdmadapter.model.MdmMessageOutbox;
 import ru.chugunov.mdmadapter.model.MdmMessageOutboxStatus;
@@ -40,7 +40,7 @@ public class MdmOutboxSender {
 
                 messageOutboxStrategy.send(mdmMessage, outbox);
 
-            } catch (SendOutboxTimeoutException e) {
+            } catch (BusinessException e) {
                 log.error("Превышено время ожидания от сервиса при отправке события id={}, target={}",
                         outbox.getMdmMessageId(), outbox.getTarget());
 
