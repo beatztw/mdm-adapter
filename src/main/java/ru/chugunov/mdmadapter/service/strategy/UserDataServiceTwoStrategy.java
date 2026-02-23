@@ -1,15 +1,11 @@
 package ru.chugunov.mdmadapter.service.strategy;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.chugunov.mdmadapter.dto.requests.UpdateUserDataServiceTwoRequest;
 import ru.chugunov.mdmadapter.dto.requests.UserDataServiceTwoEvent;
-import ru.chugunov.mdmadapter.dto.responses.ServiceResponseStatus;
-import ru.chugunov.mdmadapter.dto.responses.UserDataServiceTwoResponse;
-import ru.chugunov.mdmadapter.dto.responses.UserDataServiceTwoResponseBody;
+import ru.chugunov.mdmadapter.dto.responses.*;
 import ru.chugunov.mdmadapter.exeption.BusinessException;
-import ru.chugunov.mdmadapter.exeption.SendOutboxTimeoutException;
 import ru.chugunov.mdmadapter.model.MdmMessage;
 import ru.chugunov.mdmadapter.model.MdmMessageOutbox;
 import ru.chugunov.mdmadapter.model.MdmMessageOutboxStatus;
@@ -23,57 +19,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class UserDataServiceTwoStrategy implements MdmMessageOutboxStrategy {
+public class UserDataServiceTwoStrategy extends AbstractMdmMessageOutboxStrategy {
 
-    private final JsonUtils jsonUtils;
-    private final MdmProperty mdmProperty;
-    private final ExecutorService externalServiceExecutor;
     private final UserDataServiceTwoClient userDataServiceTwoClient;
-    private final MdmMessageOutboxRepository mdmMessageOutboxRepository;
 
-    @Override
-    public MdmMessageOutboxTarget getTarget() {
-        return MdmMessageOutboxTarget.USER_DATA_SERVICE_TWO;
+    protected UserDataServiceTwoStrategy(JsonUtils jsonUtils,
+                                         MdmProperty mdmProperty,
+                                         ExecutorService externalServiceExecutor,
+                                         MdmMessageOutboxRepository mdmMessageOutboxRepository,
+                                         UserDataServiceTwoClient userDataServiceTwoClient) {
+        super(jsonUtils, mdmProperty, externalServiceExecutor, mdmMessageOutboxRepository);
+        this.userDataServiceTwoClient = userDataServiceTwoClient;
     }
 
     @Override
-    public void send(MdmMessage mdmMessage, MdmMessageOutbox outbox) {
-        String senderName = mdmProperty.getSystem().getUsername();
-
-        callService(mdmMessage, senderName, outbox);
+    protected String getServiceName() {
+        return "user-data-service-two";
     }
 
-    private CompletableFuture<Void> callService(MdmMessage mdmMessage,
-                                                String senderName,
-                                                MdmMessageOutbox outbox) throws BusinessException {
+    @Override
+    protected CompletableFuture<Void> callService(MdmMessage mdmMessage, String senderName, MdmMessageOutbox outbox) {
         UpdateUserDataServiceTwoRequest request = buildRequest(mdmMessage, senderName);
 
-            return CompletableFuture.supplyAsync(() -> userDataServiceTwoClient.updatePhone(request),
-                            externalServiceExecutor)
-                    .thenAccept(response -> handleResponse(outbox, response))
-                    .exceptionallyAsync(ex -> {
-                        if (ex instanceof TimeoutException) {
-                            log.error("Превышено время ожидания от сервиса при отправке события id={}, target={}",
-                                    outbox.getMdmMessageId(), outbox.getTarget());
+        return CompletableFuture.supplyAsync(() -> userDataServiceTwoClient.updatePhone(request),
+                        externalServiceExecutor)
+                .thenAcceptAsync(response -> handleResponse(outbox, response), externalServiceExecutor)
+                .exceptionallyAsync(ex -> {
+                    handleOutboxMessageException(outbox, ex);
 
-                            throw new SendOutboxTimeoutException("user-data-service-one");
-                        } else {
-                            log.error("При отправке события id={}, target={} в сервисы возникла непредвиденная ошибка",
-                                    outbox.getMdmMessageId(), outbox.getTarget());
-
-                            throw new BusinessException("Ошибка при вызове сервиса user-data-service-two");
-                        }
-                    }, externalServiceExecutor);
-
+                    throw new BusinessException(ex);
+                }, externalServiceExecutor);
     }
 
-    private void handleResponse(MdmMessageOutbox outbox, UserDataServiceTwoResponse response) {
-        UserDataServiceTwoResponseBody body = response.getBody();
+    @Override
+    protected void handleResponse(MdmMessageOutbox outbox, Object response) {
+        UserDataServiceTwoResponse serviceTwoResponse = (UserDataServiceTwoResponse) response;
+        UserDataServiceTwoResponseBody body = serviceTwoResponse.getBody();
 
         if (ServiceResponseStatus.SUCCESS.equals(body.getStatus())) {
             outbox.setStatus(MdmMessageOutboxStatus.DELIVERED);
@@ -83,6 +67,11 @@ public class UserDataServiceTwoStrategy implements MdmMessageOutboxStrategy {
 
         outbox.setResponseData(jsonUtils.toJson(Map.of("response", body)));
         mdmMessageOutboxRepository.save(outbox);
+    }
+
+    @Override
+    public MdmMessageOutboxTarget getTarget() {
+        return MdmMessageOutboxTarget.USER_DATA_SERVICE_TWO;
     }
 
     private UpdateUserDataServiceTwoRequest buildRequest(MdmMessage mdmMessage, String senderName) {

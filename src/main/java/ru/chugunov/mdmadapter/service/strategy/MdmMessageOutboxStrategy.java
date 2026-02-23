@@ -4,9 +4,11 @@ import ru.chugunov.mdmadapter.model.MdmMessage;
 import ru.chugunov.mdmadapter.model.MdmMessageOutbox;
 import ru.chugunov.mdmadapter.model.MdmMessageOutboxTarget;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface MdmMessageOutboxStrategy {
 
-    void send(MdmMessage mdmMessage, MdmMessageOutbox outbox);
+    CompletableFuture<Void> send(MdmMessage mdmMessage, MdmMessageOutbox outbox);
 
     MdmMessageOutboxTarget getTarget();
 

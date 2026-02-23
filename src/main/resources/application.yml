@@ -57,10 +57,12 @@ mdm:
       threads: 10
       queue-capacity: 1000
     external-service:
-      threads: 10
-      queue-capacity: 1000
+      threads: 5
+      queue-capacity: 100
   scheduler:
     resend-mdm-message-outbox:
+      update-time-to-minutes: 1
+      update-time-from-minutes: 1440
       page-size: 100
       cron: 0 */5 * * * *
 

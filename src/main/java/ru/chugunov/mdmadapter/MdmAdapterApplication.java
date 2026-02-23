@@ -7,13 +7,15 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.chugunov.mdmadapter.property.MdmExecutorsProperty;
 import ru.chugunov.mdmadapter.property.MdmProperty;
+import ru.chugunov.mdmadapter.property.MdmResendMessageProperty;
 
 @EnableScheduling
 @EnableFeignClients
 @SpringBootApplication
 @EnableConfigurationProperties(value = {
         MdmProperty.class,
-        MdmExecutorsProperty.class
+        MdmExecutorsProperty.class,
+        MdmResendMessageProperty.class
 })
 public class MdmAdapterApplication {
 

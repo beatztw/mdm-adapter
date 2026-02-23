@@ -1,5 +1,6 @@
 package ru.chugunov.mdmadapter.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.chugunov.mdmadapter.model.MdmMessageOutbox;
@@ -21,6 +22,7 @@ public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutb
     List<MdmMessageOutbox> findMdmMessageForRetry(LocalDateTime updateTimeTo,
                                                   LocalDateTime updateTimeFrom,
                                                   List<String> statuses,
-                                                  Long lastId);
+                                                  Long lastId,
+                                                  Pageable pageable);
 
 }
