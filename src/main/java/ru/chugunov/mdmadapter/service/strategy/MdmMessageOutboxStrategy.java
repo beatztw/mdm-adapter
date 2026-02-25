@@ -6,10 +6,11 @@ import ru.chugunov.mdmadapter.model.MdmMessageOutboxTarget;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface MdmMessageOutboxStrategy {
+public interface MdmMessageOutboxStrategy<T> {
 
-    CompletableFuture<Void> send(MdmMessage mdmMessage, MdmMessageOutbox outbox);
+    CompletableFuture<T> send(MdmMessage mdmMessage, MdmMessageOutbox outbox);
 
     MdmMessageOutboxTarget getTarget();
 
+    String getServiceName();
 }

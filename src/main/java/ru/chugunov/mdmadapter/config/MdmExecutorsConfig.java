@@ -14,21 +14,21 @@ public class MdmExecutorsConfig {
     private final MdmExecutorsProperty mdmExecutorsProperty;
 
     @Bean(destroyMethod = "shutdown")
-    public ExecutorService outboxElasticExecutor() {
-        return createElasticExecutor(mdmExecutorsProperty.getOutboxElastic().getThreads(),
-                mdmExecutorsProperty.getOutboxElastic().getQueueCapacity());
+    public ExecutorService processOutboxEventExecutor() {
+        return createElasticExecutor(mdmExecutorsProperty.getProcessOutboxEvent().getThreads(),
+                mdmExecutorsProperty.getProcessOutboxEvent().getQueueCapacity());
     }
 
     @Bean(destroyMethod = "shutdown")
-    public ExecutorService externalServiceExecutor() {
-        return createElasticExecutor(mdmExecutorsProperty.getExternalService().getThreads(),
-                mdmExecutorsProperty.getExternalService().getQueueCapacity());
+    public ExecutorService userDataIntegrationServiceExecutor() {
+        return createElasticExecutor(mdmExecutorsProperty.getUserDataIntegrationService().getThreads(),
+                mdmExecutorsProperty.getUserDataIntegrationService().getQueueCapacity());
     }
 
     @Bean(destroyMethod = "shutdown")
-    public ExecutorService resendMdmMessageOutboxExecutor() {
-        return createElasticExecutor(mdmExecutorsProperty.getResendMdmMessageOutbox().getThreads(),
-                mdmExecutorsProperty.getResendMdmMessageOutbox().getQueueCapacity());
+    public ExecutorService scheduledResendMdmMessageExecutor() {
+        return createElasticExecutor(mdmExecutorsProperty.getScheduledResendMdmMessage().getThreads(),
+                mdmExecutorsProperty.getScheduledResendMdmMessage().getQueueCapacity());
     }
 
     private ThreadPoolExecutor createElasticExecutor(int threads, int queueCapacity) {

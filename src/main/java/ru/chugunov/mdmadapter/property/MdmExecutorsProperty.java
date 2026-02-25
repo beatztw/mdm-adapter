@@ -9,27 +9,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "mdm.executors")
 public class MdmExecutorsProperty {
 
-    private OutboxElastic outboxElastic = new OutboxElastic();
-    private ResendMdmMessageOutbox resendMdmMessageOutbox = new ResendMdmMessageOutbox();
-    private ExternalService externalService = new ExternalService();
+    private ProcessOutboxEvent processOutboxEvent = new ProcessOutboxEvent();
+    private ScheduledResendMdmMessage scheduledResendMdmMessage = new ScheduledResendMdmMessage();
+    private UserDataIntegrationService userDataIntegrationService = new UserDataIntegrationService();
 
     @Getter
     @Setter
-    public static class OutboxElastic {
+    public static class ProcessOutboxEvent {
         private Integer threads;
         private Integer queueCapacity;
     }
 
     @Getter
     @Setter
-    public static class ResendMdmMessageOutbox {
+    public static class ScheduledResendMdmMessage {
         private Integer threads;
         private Integer queueCapacity;
     }
 
     @Getter
     @Setter
-    public static class ExternalService {
+    public static class UserDataIntegrationService {
         private Integer threads;
         private Integer queueCapacity;
     }

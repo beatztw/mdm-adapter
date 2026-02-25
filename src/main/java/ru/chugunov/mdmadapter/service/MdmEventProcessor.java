@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 public class MdmEventProcessor {
 
     private final MdmOutboxSender mdmOutboxSender;
-    private final ExecutorService outboxElasticExecutor;
+    private final ExecutorService processOutboxEventExecutor;
     private final MdmMessageRepository mdmMessageRepository;
     private final MdmMessageOutboxRepository mdmMessageOutboxRepository;
 
@@ -40,7 +40,7 @@ public class MdmEventProcessor {
 
                     completableFutures.forEach(CompletableFuture::join);
                 },
-                outboxElasticExecutor);
+                processOutboxEventExecutor);
     }
 
     private List<MdmMessageOutbox> saveOutboxRecords(MdmMessage mdmMessage) {

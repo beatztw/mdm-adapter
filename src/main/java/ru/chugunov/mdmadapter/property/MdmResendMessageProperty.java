@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "mdm.scheduler.resend-mdm-message-outbox")
 public class MdmResendMessageProperty {
 
-    private long UpdateTimeToMinutes;
-    private long UpdateTimeFromMinutes;
+    private long updateTimeToMinutes;
+    private long updateTimeFromMinutes;
     private int pageSize;
 
 }

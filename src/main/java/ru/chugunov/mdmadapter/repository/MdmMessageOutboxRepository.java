@@ -17,7 +17,6 @@ public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutb
             AND msg.lastUpdateTime > :updateTimeFrom
             AND msg.status IN (:statuses)
             AND msg.id > :lastId
-        ORDER BY msg.id
     """)
     List<MdmMessageOutbox> findMdmMessageForRetry(LocalDateTime updateTimeTo,
                                                   LocalDateTime updateTimeFrom,

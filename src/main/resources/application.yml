@@ -50,18 +50,18 @@ mdm:
     user-data-two:
       url: http://81.30.105.54:8020
   executors:
-    outbox-elastic:
+    process-outbox-event:
       threads: 10
       queue-capacity: 1000
-    resend-mdm-message-outbox:
-      threads: 10
-      queue-capacity: 1000
-    external-service:
+    scheduled-resend-mdm-message:
+      threads: 1
+      queue-capacity: 1
+    user-data-integration-service:
       threads: 5
       queue-capacity: 100
   scheduler:
     resend-mdm-message-outbox:
-      update-time-to-minutes: 1
+      update-time-to-minutes: 15
       update-time-from-minutes: 1440
       page-size: 100
       cron: 0 */5 * * * *
