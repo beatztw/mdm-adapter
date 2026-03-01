@@ -1,22 +1,20 @@
 package ru.chugunov.mdmadapter.dto.common;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.chugunov.mdmadapter.dto.responses.ServiceResponseStatus;
 
-import java.util.UUID;
+import java.io.Serializable;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommonResponse<T> {
+public class CommonServiceResponseBody implements Serializable {
 
-    private UUID id;
-    private T body;
-
+    private String id;
+    private ServiceResponseStatus status;
     private String errorMessage;
 }

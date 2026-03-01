@@ -1,32 +1,41 @@
 package ru.chugunov.mdmadapter.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.chugunov.mdmadapter.property.MdmExecutorsProperty;
 
 import java.util.concurrent.*;
 
 @Configuration
+@RequiredArgsConstructor
 public class MdmExecutorsConfig {
 
-    @Value("${mdm.executors.outbox-elastic.threads}")
-    private Integer OutboxElasticThreads;
-    @Value("${mdm.executors.outbox-elastic.queue-capacity}")
-    private Integer OutboxElasticQueueCapacity;
+    private final MdmExecutorsProperty mdmExecutorsProperty;
 
     @Bean(destroyMethod = "shutdown")
-    public ExecutorService outboxElasticExecutor(){
-        int threads = OutboxElasticThreads;
-        int queueCapacity = OutboxElasticQueueCapacity;
+    public ExecutorService processOutboxEventExecutor() {
+        return createElasticExecutor(mdmExecutorsProperty.getProcessOutboxEvent().getThreads(),
+                mdmExecutorsProperty.getProcessOutboxEvent().getQueueCapacity());
+    }
 
-        return createElasticExecutor(threads, queueCapacity);
+    @Bean(destroyMethod = "shutdown")
+    public ExecutorService userDataIntegrationServiceExecutor() {
+        return createElasticExecutor(mdmExecutorsProperty.getUserDataIntegrationService().getThreads(),
+                mdmExecutorsProperty.getUserDataIntegrationService().getQueueCapacity());
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public ExecutorService scheduledResendMdmMessageExecutor() {
+        return createElasticExecutor(mdmExecutorsProperty.getScheduledResendMdmMessage().getThreads(),
+                mdmExecutorsProperty.getScheduledResendMdmMessage().getQueueCapacity());
     }
 
     private ThreadPoolExecutor createElasticExecutor(int threads, int queueCapacity) {
         BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(queueCapacity);
 
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-            threads, threads,
+                threads, threads,
                 60L, TimeUnit.SECONDS,
                 queue, new ThreadPoolExecutor.AbortPolicy()
         );

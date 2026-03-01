@@ -1,6 +1,7 @@
 package ru.chugunov.mdmadapter.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class UpdatePhoneMdmEvent {
     @ValidUUID
     private String id;
 
-    @NotBlank(message = "Поле 'type' не может быть пустым")
+    @NotNull(message = "Поле 'type' не может быть пустым")
     private MdmMessageType type;
 
     @NotBlank(message = "Поле 'guid' не может быть пустым")

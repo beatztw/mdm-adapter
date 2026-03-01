@@ -18,7 +18,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
   kafka:
     bootstrap-servers: 81.30.105.54:29092
     producer:
@@ -31,10 +31,10 @@ spring:
         config:
           user-data-service-one-client:
             read-timeout: 3000
-            connect-timeout: 3000
+            connect-timeout: 5000
           user-data-service-two-client:
             read-timeout: 3000
-            connect-timeout: 3000
+            connect-timeout: 5000
 
 mdm:
   system:
@@ -44,16 +44,26 @@ mdm:
       enabled: true
       change-phone:
         topic-in: MDM.Change.Phone.IN.V1
-  service:
+  integration:
     user-data-one:
-      url: http://81.30.105.54:8080
-      response-timeout-seconds: 5
+      url: http://81.30.105.54:8020
     user-data-two:
-      url: http://81.30.105.54:8080
-      response-timeout-seconds: 5
+      url: http://81.30.105.54:8020
   executors:
-    outbox-elastic:
+    process-outbox-event:
       threads: 10
       queue-capacity: 1000
+    scheduled-resend-mdm-message:
+      threads: 1
+      queue-capacity: 1
+    user-data-integration-service:
+      threads: 5
+      queue-capacity: 100
+  scheduler:
+    resend-mdm-message-outbox:
+      update-time-to-minutes: 15
+      update-time-from-minutes: 1440
+      page-size: 100
+      cron: 0 */5 * * * *
 
 
