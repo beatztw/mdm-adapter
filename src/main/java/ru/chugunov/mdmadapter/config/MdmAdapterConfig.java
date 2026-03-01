@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.chugunov.mdmadapter.model.MdmMessageOutboxTarget;
-import ru.chugunov.mdmadapter.service.strategy.MdmMessageOutboxStrategy;
+import ru.chugunov.mdmadapter.service.strategy.ClientServiceStrategy;
 
 import java.util.List;
 import java.util.Map;
@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MdmAdapterConfig {
 
-    private final List<MdmMessageOutboxStrategy> mdmMessageOutboxStrategies;
+    private final List<ClientServiceStrategy> clientServiceStrategies;
 
     @Bean
-    public Map<MdmMessageOutboxTarget, MdmMessageOutboxStrategy> mdmMessageOutboxMap() {
-        return mdmMessageOutboxStrategies.stream()
+    public Map<MdmMessageOutboxTarget, ClientServiceStrategy> clientServiceByTarget() {
+        return clientServiceStrategies.stream()
                 .collect(Collectors.toUnmodifiableMap(
-                        MdmMessageOutboxStrategy::getTarget,
+                        ClientServiceStrategy::getTarget,
                         Function.identity()
                 ));
     }

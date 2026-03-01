@@ -57,7 +57,7 @@ public class ResendMdmMessageTask {
                             message.getId(), message.getTarget(), e.getMessage());
                 } catch (Exception e) {
                     totalFailed++;
-                    log.error("Произошла непредвиденная ошибка при повторной отправке события id={}, target={}." +
+                    log.error("Непредвиденная ошибка при повторной отправке mdm события id={} по направлению {}." +
                                     " Сообщение об ошибке {}",
                             message.getMdmMessageId(), message.getTarget(), e.getMessage());
                 }

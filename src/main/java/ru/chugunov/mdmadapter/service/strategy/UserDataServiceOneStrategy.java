@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 import ru.chugunov.mdmadapter.dto.requests.UpdateUserDataServiceOneRequest;
 import ru.chugunov.mdmadapter.dto.requests.UserDataServiceOneBody;
 import ru.chugunov.mdmadapter.dto.requests.UserDataServiceOneMeta;
+import ru.chugunov.mdmadapter.dto.common.CommonServiceResponseBody;
 import ru.chugunov.mdmadapter.dto.responses.UserDataServiceOneResponse;
+import ru.chugunov.mdmadapter.mapper.ServiceResponseMapper;
 import ru.chugunov.mdmadapter.model.MdmMessage;
 import ru.chugunov.mdmadapter.model.MdmMessageOutbox;
 import ru.chugunov.mdmadapter.model.MdmMessageOutboxTarget;
@@ -19,16 +21,17 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Component
-public class UserDataServiceOneStrategy extends AbstractMdmMessageOutboxStrategy<UserDataServiceOneResponse> {
+public class UserDataServiceOneStrategy extends AbstractClientServiceStrategy {
 
     private final UserDataServiceOneClient userDataServiceOneClient;
 
     protected UserDataServiceOneStrategy(JsonUtils jsonUtils,
                                          MdmProperty mdmProperty,
+                                         ServiceResponseMapper serviceResponseMapper,
                                          ExecutorService userDataIntegrationServiceExecutor,
                                          MdmMessageOutboxRepository mdmMessageOutboxRepository,
                                          UserDataServiceOneClient userDataServiceOneClient) {
-        super(jsonUtils, mdmProperty, userDataIntegrationServiceExecutor, mdmMessageOutboxRepository);
+        super(jsonUtils, mdmProperty, serviceResponseMapper, userDataIntegrationServiceExecutor, mdmMessageOutboxRepository);
         this.userDataServiceOneClient = userDataServiceOneClient;
     }
 
@@ -38,10 +41,16 @@ public class UserDataServiceOneStrategy extends AbstractMdmMessageOutboxStrategy
     }
 
     @Override
-    protected CompletableFuture<UserDataServiceOneResponse> callService(MdmMessage mdmMessage, String senderName, MdmMessageOutbox outbox) {
+    protected CompletableFuture<CommonServiceResponseBody> callService(MdmMessage mdmMessage,
+                                                                       String senderName,
+                                                                       MdmMessageOutbox outbox) {
         UpdateUserDataServiceOneRequest request = buildRequest(mdmMessage, senderName);
 
-        return CompletableFuture.supplyAsync(() -> userDataServiceOneClient.updatePhone(request),
+        return CompletableFuture.supplyAsync(() -> {
+                    UserDataServiceOneResponse response = userDataServiceOneClient.updatePhone(request);
+
+                    return serviceResponseMapper.toCommonResponseBody(response.getBody());
+                },
                 userDataIntegrationServiceExecutor);
     }
 

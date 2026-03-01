@@ -2,9 +2,11 @@ package ru.chugunov.mdmadapter.service.strategy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.chugunov.mdmadapter.dto.common.CommonServiceResponseBody;
 import ru.chugunov.mdmadapter.dto.requests.UpdateUserDataServiceTwoRequest;
 import ru.chugunov.mdmadapter.dto.requests.UserDataServiceTwoEvent;
 import ru.chugunov.mdmadapter.dto.responses.UserDataServiceTwoResponse;
+import ru.chugunov.mdmadapter.mapper.ServiceResponseMapper;
 import ru.chugunov.mdmadapter.model.MdmMessage;
 import ru.chugunov.mdmadapter.model.MdmMessageOutbox;
 import ru.chugunov.mdmadapter.model.MdmMessageOutboxTarget;
@@ -19,16 +21,17 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Component
-public class UserDataServiceTwoStrategy extends AbstractMdmMessageOutboxStrategy<UserDataServiceTwoResponse> {
+public class UserDataServiceTwoStrategy extends AbstractClientServiceStrategy {
 
     private final UserDataServiceTwoClient userDataServiceTwoClient;
 
     protected UserDataServiceTwoStrategy(JsonUtils jsonUtils,
                                          MdmProperty mdmProperty,
+                                         ServiceResponseMapper serviceResponseMapper,
                                          ExecutorService userDataIntegrationServiceExecutor,
                                          MdmMessageOutboxRepository mdmMessageOutboxRepository,
                                          UserDataServiceTwoClient userDataServiceTwoClient) {
-        super(jsonUtils, mdmProperty, userDataIntegrationServiceExecutor, mdmMessageOutboxRepository);
+        super(jsonUtils, mdmProperty, serviceResponseMapper, userDataIntegrationServiceExecutor, mdmMessageOutboxRepository);
         this.userDataServiceTwoClient = userDataServiceTwoClient;
     }
 
@@ -38,10 +41,16 @@ public class UserDataServiceTwoStrategy extends AbstractMdmMessageOutboxStrategy
     }
 
     @Override
-    protected CompletableFuture<UserDataServiceTwoResponse> callService(MdmMessage mdmMessage, String senderName, MdmMessageOutbox outbox) {
+    protected CompletableFuture<CommonServiceResponseBody> callService(MdmMessage mdmMessage,
+                                                                        String senderName,
+                                                                        MdmMessageOutbox outbox) {
         UpdateUserDataServiceTwoRequest request = buildRequest(mdmMessage, senderName);
 
-        return CompletableFuture.supplyAsync(() -> userDataServiceTwoClient.updatePhone(request),
+        return CompletableFuture.supplyAsync(() -> {
+                    UserDataServiceTwoResponse response = userDataServiceTwoClient.updatePhone(request);
+
+                    return serviceResponseMapper.toCommonResponseBody(response.getBody());
+                },
                 userDataIntegrationServiceExecutor);
     }
 
